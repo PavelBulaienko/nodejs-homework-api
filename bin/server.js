@@ -1,13 +1,8 @@
+const mongoose = require("mongoose");
+
 const app = require("../app");
 
-// const PORT = process.env.PORT || 3000;
-
-// app.listen(PORT, () => {
-//   console.log(`Server running. Use our API on port: ${PORT}`);
-// });
-
-const mongoose = require("mongoose");
-const { DB_URL } = require("../config");
+const { DB_URL } = process.env;
 
 mongoose
   .connect(DB_URL)
@@ -19,3 +14,9 @@ mongoose
     console.log(error);
     process.exit(1);
   });
+
+// const PORT = process.env.PORT || 3000;
+
+// app.listen(PORT, () => {
+//   console.log(`Server running. Use our API on port: ${PORT}`);
+// });
