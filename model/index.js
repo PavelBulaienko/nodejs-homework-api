@@ -14,10 +14,7 @@ const listContacts = async () => {
 
 const getContactById = async (contactId) => {
   try {
-    const soughtContact = await Contact.find(
-      { _id: contactId },
-      "_id name email phone favorite createdAt updatedAt"
-    );
+    const soughtContact = await Contact.findById(contactId);
     return soughtContact;
   } catch (error) {
     console.log(error);
@@ -26,7 +23,7 @@ const getContactById = async (contactId) => {
 
 const removeContact = async (contactId) => {
   try {
-    const deletedContact = await Contact.deleteOne({ _id: contactId });
+    const deletedContact = await Contact.findByIdAndDelete(contactId);
     return deletedContact;
   } catch (error) {
     console.log(error);
@@ -44,21 +41,22 @@ const addContact = async (body) => {
 
 const updateContact = async (contactId, body) => {
   try {
-    const updatedContact = await Contact.updateOne(
-      { _id: contactId },
-      { body }
-    );
+    const updatedContact = await Contact.findByIdAndUpdate(contactId, body, {
+      new: true,
+    });
     return updatedContact;
   } catch (error) {
     console.log(error);
   }
 };
 
-const togleFavoriteContact = async (contactId, body) => {
+const updateFavoriteContact = async (contactId, body) => {
   try {
-    const updatedContact = await Contact.updateOne(
-      { _id: contactId },
-      { body }
+    const { price } = body;
+    const updatedContact = await Contact.findByIdAndUpdate(
+      contactId,
+      { price },
+      { new: true }
     );
     return updatedContact;
   } catch (error) {
@@ -72,5 +70,5 @@ module.exports = {
   removeContact,
   addContact,
   updateContact,
-  togleFavoriteContact,
+  updateFavoriteContact,
 };

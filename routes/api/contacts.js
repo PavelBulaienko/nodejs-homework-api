@@ -62,7 +62,7 @@ router.delete("/:contactId", async (req, res, next) => {
   }
 });
 
-router.patch("/:contactId", async (req, res, next) => {
+router.put("/:contactId", async (req, res, next) => {
   try {
     const { error } = joiContactSchema.validate(req.body);
     if (error) {
@@ -90,16 +90,12 @@ router.patch("/:contactId/favorite", async (req, res, next) => {
     }
 
     const { contactId } = req.params;
+    const updatedContact = await ctrl.updateFavoriteContact(
+      contactId,
+      req.body
+    );
 
-    // const soughtContact = await ctrl.getContactById(contactId);
-    // if (soughtContact) {
-    const updatedContact = await ctrl.togleFavoriteContact(contactId, req.body);
-    return res.json(updatedContact, res.json(soughtContact));
-    // } else {
-    //   return res.status(404).json({
-    //     message: "missing field favorite",
-    //   });
-    // }
+    return res.json(updatedContact);
   } catch (error) {
     next(error);
   }
