@@ -9,6 +9,7 @@ const joiContactSchema = Joi.object({
     })
     .required(),
   phone: Joi.number().required(),
+  favorite: Joi.boolean(),
 });
 
 module.exports = {

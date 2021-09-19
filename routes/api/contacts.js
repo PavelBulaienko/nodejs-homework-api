@@ -62,7 +62,7 @@ router.delete("/:contactId", async (req, res, next) => {
   }
 });
 
-router.patch("/:contactId", async (req, res, next) => {
+router.put("/:contactId", async (req, res, next) => {
   try {
     const { error } = joiContactSchema.validate(req.body);
     if (error) {
@@ -77,6 +77,25 @@ router.patch("/:contactId", async (req, res, next) => {
     } else {
       res.json(newContact);
     }
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.patch("/:contactId/favorite", async (req, res, next) => {
+  try {
+    const { error } = joiContactSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.message });
+    }
+
+    const { contactId } = req.params;
+    const updatedContact = await ctrl.updateFavoriteContact(
+      contactId,
+      req.body
+    );
+
+    return res.json(updatedContact);
   } catch (error) {
     next(error);
   }

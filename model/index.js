@@ -1,60 +1,67 @@
-const fs = require("fs/promises");
-const path = require("path");
-const shortid = require("shortid");
-
-const contactsPath = path.join(__dirname, "./contacts.json");
+const { Contact } = require("./contacts");
 
 const listContacts = async () => {
-  return fs
-    .readFile(contactsPath)
-    .then((data) => JSON.parse(data.toString()))
-    .catch((err) => console.log(err.message));
+  try {
+    const allContacts = await Contact.find(
+      {},
+      "_id name email phone favorite createdAt updatedAt"
+    );
+    return allContacts;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const getContactById = async (contactId) => {
-  const allContacts = await listContacts();
-  const soughtContact = allContacts.find(
-    (contact) => contact.id.toString() === contactId.toString()
-  );
-
-  if (soughtContact) {
+  try {
+    const soughtContact = await Contact.findById(contactId);
     return soughtContact;
-  } else {
-    return null;
+  } catch (error) {
+    console.log(error);
   }
 };
 
 const removeContact = async (contactId) => {
-  const allContacts = await listContacts();
-  const newContacts = allContacts.filter((contact) => contact.id !== contactId);
-
-  fs.writeFile(contactsPath, JSON.stringify(newContacts));
+  try {
+    const deletedContact = await Contact.findByIdAndDelete(contactId);
+    return deletedContact;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-const addContact = async ({ name, email, phone }) => {
-  const allContacts = await listContacts();
-  const newContact = {
-    id: shortid.generate(),
-    name,
-    email,
-    phone,
-  };
-  allContacts.push(newContact);
-  fs.writeFile(contactsPath, JSON.stringify(allContacts));
-
-  return newContact;
+const addContact = async (body) => {
+  try {
+    const newContact = await Contact.create(body);
+    return newContact;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const updateContact = async (contactId, body) => {
-  const allContacts = await listContacts();
-  const indx = allContacts.findIndex((contact) => contact.id === contactId);
-  if (indx === -1) {
-    return null;
+  try {
+    const updatedContact = await Contact.findByIdAndUpdate(contactId, body, {
+      new: true,
+    });
+    return updatedContact;
+  } catch (error) {
+    console.log(error);
   }
-  allContacts[indx] = { ...allContacts[indx], ...body };
-  fs.writeFile(contactsPath, JSON.stringify(allContacts));
+};
 
-  return allContacts[indx];
+const updateFavoriteContact = async (contactId, body) => {
+  try {
+    const { price } = body;
+    const updatedContact = await Contact.findByIdAndUpdate(
+      contactId,
+      { price },
+      { new: true }
+    );
+    return updatedContact;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 module.exports = {
@@ -63,4 +70,5 @@ module.exports = {
   removeContact,
   addContact,
   updateContact,
+  updateFavoriteContact,
 };
